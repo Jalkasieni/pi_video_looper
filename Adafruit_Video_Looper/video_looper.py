@@ -209,21 +209,23 @@ class VideoLooper(object):
         else:
             self._idle_message()
 
-    def _fbi_display(self, path, delay):
+    def _fbi_display(self, file, delay):
         """Display image with fbi and wait for set delay"""
         #detect if the delay is number and has valid value
         if not self._is_number(delay) and delay >0:
             return
         args = ['fbi']
         args.extend(['-a -T 2 --noverbose'])  # Add arguments.
-        if delay is not 0:
-            args.extend(['-t', str(delay)])
-        args.append(path)                # Add image file path.
+        #if delay is not 0:
+        #    args.extend(['-t', str(delay)])
+        args.append(file)                # Add image file path.
         # Run fbi process and direct standard output to /dev/null.
         self._process = subprocess.Popen(args,
                                          stdout=open(os.devnull, 'wb'),
                                          close_fds=True)
-
+        time.sleep(float.delay)
+        self._fbi_stop()
+        
     def _fbi_is_running(self):
         """Return true if the video player is running, false otherwise."""
         if self._process is None:
@@ -252,8 +254,16 @@ class VideoLooper(object):
                 if movie is not None:
                     # Start playing the first available movie.
                     self._print('Playing movie: {0}'.format(movie))
-                    self._fbi_display(self._config.get('usb_drive', 'mount_path'), self._fbi_delay)
-                    #self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
+                    filename, file_ext = os.path.splitext(movie)
+                    file_is_image = False
+                    for ext in self._fbi_extensions:
+                        if file_ext = ext:
+                            file_is_image = True
+                            break
+                    if file_is_image:
+                        self._fbi_display(movie, self._fbi_delay)
+                    else:
+                        self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
