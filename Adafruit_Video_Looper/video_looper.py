@@ -49,9 +49,9 @@ class VideoLooper(object):
         if len(self._config.read(config_path)) == 0:
             raise RuntimeError('Failed to find configuration file at {0}, is the application properly installed?'.format(config_path))
         self._console_output = self._config.getboolean('video_looper', 'console_output')
-		# Load fbi configuration
-		self._fbi_delay = map(int, self._config.get('video_looper', 'fbi_delay')
-		self._fbi_extensions = config.get('video_looper', 'fbi_extensions') \
+        # Load fbi configuration
+        self._fbi_delay = map(int, self._config.get('video_looper', 'fbi_delay')
+        self._fbi_extensions = config.get('video_looper', 'fbi_extensions') \
                                  .translate(None, ' \t\r\n.') \
                                  .split(',')
         # Load configured video player and file reader modules.
@@ -208,26 +208,26 @@ class VideoLooper(object):
         else:
             self._idle_message()
 
-	def _fbi_display(self, file, delay):
-		"""Display image with fbi and wait for set delay"""
-		#detect if the delay is number and has valid value
-		if not self._is_number(delay) and delay >0:
-			return
-		args = ['fbi']
+    def _fbi_display(self, file, delay):
+        """Display image with fbi and wait for set delay"""
+        #detect if the delay is number and has valid value
+        if not self._is_number(delay) and delay >0:
+            return
+        args = ['fbi']
         args.extend(['-a -T 2'])  # Add arguments.
         args.append(file)                # Add image file path.
         # Run fbi process and direct standard output to /dev/null.
         self._process = subprocess.Popen(args,
                                          stdout=open(os.devnull, 'wb'),
                                          close_fds=True)
-		time.sleep(delay);
-		if self._process is not None and self._process.returncode is None:
+        time.sleep(delay);
+        if self._process is not None and self._process.returncode is None:
             # There are a couple processes used by omxplayer, so kill both
             # with a pkill command.
             subprocess.call(['pkill', '-9', 'fbi'])
         # Let the process be garbage collected.
         self._process = None
-		
+        
     def run(self):
         """Main program loop.  Will never return!"""
         # Get playlist of movies to play from file reader.
@@ -242,7 +242,7 @@ class VideoLooper(object):
                     # Start playing the first available movie.
                     self._print('Playing movie: {0}'.format(movie))
                     self._fbi_display(movie, delay = self._fbi_delay)
-					#self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
+                    #self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
