@@ -84,6 +84,7 @@ class VideoLooper(object):
         self._small_font = pygame.font.Font(None, 50)
         self._big_font   = pygame.font.Font(None, 250)
         self._running    = True
+        self._process    = None
 
     def _print(self, message):
         """Print message to standard output if console output is enabled."""
