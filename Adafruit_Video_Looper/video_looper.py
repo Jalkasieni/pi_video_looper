@@ -50,7 +50,7 @@ class VideoLooper(object):
             raise RuntimeError('Failed to find configuration file at {0}, is the application properly installed?'.format(config_path))
         self._console_output = self._config.getboolean('video_looper', 'console_output')
         # Load fbi configuration
-        self._fbi_delay = map(int, self._config.get('video_looper', 'fbi_delay')
+        self._fbi_delay = map(int, self._config.get('video_looper', 'fbi_delay'))
         self._fbi_extensions = self._config.get('video_looper', 'fbi_extensions') \
                                            .translate(None, ' \t\r\n.') \
                                            .split(',')
