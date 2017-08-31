@@ -51,9 +51,9 @@ class VideoLooper(object):
         self._console_output = self._config.getboolean('video_looper', 'console_output')
         # Load fbi configuration
         self._fbi_delay = map(int, self._config.get('video_looper', 'fbi_delay')
-        self._fbi_extensions = config.get('video_looper', 'fbi_extensions') \
-                                 .translate(None, ' \t\r\n.') \
-                                 .split(',')
+        self._fbi_extensions = self._config.get('video_looper', 'fbi_extensions') \
+                                           .translate(None, ' \t\r\n.') \
+                                           .split(',')
         # Load configured video player and file reader modules.
         self._player = self._load_player()
         self._reader = self._load_file_reader()
