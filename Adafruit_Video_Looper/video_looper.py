@@ -8,6 +8,7 @@ import re
 import sys
 import signal
 import time
+import subprocess
 
 import pygame
 
@@ -48,6 +49,11 @@ class VideoLooper(object):
         if len(self._config.read(config_path)) == 0:
             raise RuntimeError('Failed to find configuration file at {0}, is the application properly installed?'.format(config_path))
         self._console_output = self._config.getboolean('video_looper', 'console_output')
+		# Load fbi configuration
+		self._fbi_delay = map(int, self._config.get('video_looper', 'fbi_delay')
+		self._fbi_extensions = config.get('video_looper', 'fbi_extensions') \
+                                 .translate(None, ' \t\r\n.') \
+                                 .split(',')
         # Load configured video player and file reader modules.
         self._player = self._load_player()
         self._reader = self._load_file_reader()
@@ -74,7 +80,7 @@ class VideoLooper(object):
         self._screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
         self._blank_screen()
         # Set other static internal state.
-        self._extensions = self._player.supported_extensions()
+        self._extensions = self._player.supported_extensions()+self._fbi_extensions
         self._small_font = pygame.font.Font(None, 50)
         self._big_font   = pygame.font.Font(None, 250)
         self._running    = True
@@ -147,12 +153,12 @@ class VideoLooper(object):
             font = self._small_font
         return font.render(message, True, self._fgcolor, self._bgcolor)
 
-    def _animate_countdown(self, playlist, seconds=10):
+    def _animate_countdown(self, playlist, seconds=4):
         """Print text with the number of loaded movies and a quick countdown
         message if the on screen display is enabled.
         """
         # Print message to console with number of movies in playlist.
-        message = 'Found {0} movie{1}.'.format(playlist.length(), 
+        message = 'Found {0} image/video files{1}.'.format(playlist.length(), 
             's' if playlist.length() >= 2 else '')
         self._print(message)
         # Do nothing else if the OSD is turned off.
@@ -202,6 +208,26 @@ class VideoLooper(object):
         else:
             self._idle_message()
 
+	def _fbi_display(self, file, delay):
+		"""Display image with fbi and wait for set delay"""
+		#detect if the delay is number and has valid value
+		if not self._is_number(delay) and delay >0:
+			return
+		args = ['fbi']
+        args.extend(['-a -T 2'])  # Add arguments.
+        args.append(file)                # Add image file path.
+        # Run fbi process and direct standard output to /dev/null.
+        self._process = subprocess.Popen(args,
+                                         stdout=open(os.devnull, 'wb'),
+                                         close_fds=True)
+		time.sleep(delay);
+		if self._process is not None and self._process.returncode is None:
+            # There are a couple processes used by omxplayer, so kill both
+            # with a pkill command.
+            subprocess.call(['pkill', '-9', 'fbi'])
+        # Let the process be garbage collected.
+        self._process = None
+		
     def run(self):
         """Main program loop.  Will never return!"""
         # Get playlist of movies to play from file reader.
@@ -215,7 +241,8 @@ class VideoLooper(object):
                 if movie is not None:
                     # Start playing the first available movie.
                     self._print('Playing movie: {0}'.format(movie))
-                    self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
+                    self._fbi_display(movie, delay = self._fbi_delay)
+					#self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
