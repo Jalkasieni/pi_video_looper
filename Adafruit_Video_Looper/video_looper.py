@@ -50,7 +50,7 @@ class VideoLooper(object):
             raise RuntimeError('Failed to find configuration file at {0}, is the application properly installed?'.format(config_path))
         self._console_output = self._config.getboolean('video_looper', 'console_output')
         # Load fbi configuration
-        self._fbi_delay = map(int, self._config.get('video_looper', 'fbi_delay'))
+        self._fbi_delay = int(self._config.get('video_looper', 'fbi_delay'))
         self._fbi_extensions = self._config.get('video_looper', 'fbi_extensions') \
                                            .translate(None, ' \t\r\n.') \
                                            .split(',')
@@ -211,8 +211,8 @@ class VideoLooper(object):
     def _fbi_display(self, file, delay):
         """Display image with fbi and wait for set delay"""
         #detect if the delay is number and has valid value
-        #if not self._is_number(delay) and delay >0:
-        #    return
+        if not self._is_number(delay) and delay >0:
+            return
         args = ['fbi']
         args.extend(['-a -T 2'])  # Add arguments.
         args.append(file)                # Add image file path.
@@ -220,7 +220,7 @@ class VideoLooper(object):
         self._process = subprocess.Popen(args,
                                          stdout=open(os.devnull, 'wb'),
                                          close_fds=True)
-        time.sleep(delay);
+        time.sleep(float(delay));
         if self._process is not None and self._process.returncode is None:
             # There are a couple processes used by omxplayer, so kill both
             # with a pkill command.
