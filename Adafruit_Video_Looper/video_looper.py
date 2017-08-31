@@ -211,8 +211,8 @@ class VideoLooper(object):
     def _fbi_display(self, file, delay):
         """Display image with fbi and wait for set delay"""
         #detect if the delay is number and has valid value
-        if not self._is_number(delay) and delay >0:
-            return
+        #if not self._is_number(delay) and delay >0:
+        #    return
         args = ['fbi']
         args.extend(['-a -T 2'])  # Add arguments.
         args.append(file)                # Add image file path.
