@@ -60,7 +60,7 @@ class VideoLooper(object):
         # Load other configuration values.
         self._osd = self._config.getboolean('video_looper', 'osd')
         self._is_random = self._config.getboolean('video_looper', 'is_random')
-        # Parse string of 3 comma separated values like "255, 255, 255" into 
+        # Parse string of 3 comma separated values like "255, 255, 255" into
         # list of ints for colors.
         self._bgcolor = map(int, self._config.get('video_looper', 'bgcolor') \
                                              .translate(None, ',') \
@@ -104,11 +104,11 @@ class VideoLooper(object):
 
     def _is_number(iself, s):
         try:
-            float(s) 
+            float(s)
             return True
         except ValueError:
             return False
-    
+
     def _build_playlist(self):
         """Search all the file reader paths for movie files with the provided
         extensions.
@@ -126,7 +126,7 @@ class VideoLooper(object):
                 # key from an OSX computer
                 movies.extend(['{0}/{1}'.format(path.rstrip('/'), x) \
                                for x in os.listdir(path) \
-                               if re.search('\.{0}$'.format(ex), x, 
+                               if re.search('\.{0}$'.format(ex), x,
                                             flags=re.IGNORECASE) and \
                                x[0] is not '.'])
                 # Get the video volume from the file in the usb key
@@ -158,7 +158,7 @@ class VideoLooper(object):
         message if the on screen display is enabled.
         """
         # Print message to console with number of movies in playlist.
-        message = 'Found {0} image/video files{1}.'.format(playlist.length(), 
+        message = 'Found {0} image/video files{1}.'.format(playlist.length(),
             's' if playlist.length() >= 2 else '')
         self._print(message)
         # Do nothing else if the OSD is turned off.
@@ -215,7 +215,7 @@ class VideoLooper(object):
             return
         args = ['fbi']
         args.extend(['-a -T 2 --noverbose'])  # Add arguments.
-		if delay is not 0:
+        if delay is not 0:
             args.extend(['-t', str(delay)])
         args.append(path)                # Add image file path.
         # Run fbi process and direct standard output to /dev/null.
@@ -229,15 +229,15 @@ class VideoLooper(object):
             return False
         self._process.poll()
         return self._process.returncode is None
-		
-	def _fbi_stop(self):
-		if self._process is not None and self._process.returncode is None:
+
+    def _fbi_stop(self):
+        if self._process is not None and self._process.returncode is None:
             # There are a couple processes used by omxplayer, so kill both
             # with a pkill command.
             subprocess.call(['pkill', '-9', 'fbi'])
         # Let the process be garbage collected.
         self._process = None
-		
+
     def run(self):
         """Main program loop.  Will never return!"""
         # Get playlist of movies to play from file reader.
@@ -256,8 +256,8 @@ class VideoLooper(object):
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
-			    self._fbi_stop()
-                self._player.stop(3)  # Up to 3 second delay waiting for old 
+                self._fbi_stop()
+                self._player.stop(3)  # Up to 3 second delay waiting for old
                                       # player to stop.
                 # Rebuild playlist and show countdown again (if OSD enabled).
                 playlist = self._build_playlist()
