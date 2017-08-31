@@ -241,7 +241,7 @@ class VideoLooper(object):
                 if movie is not None:
                     # Start playing the first available movie.
                     self._print('Playing movie: {0}'.format(movie))
-                    self._fbi_display(movie, delay = self._fbi_delay)
+                    self._fbi_display(movie, self._fbi_delay)
                     #self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
