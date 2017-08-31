@@ -208,26 +208,36 @@ class VideoLooper(object):
         else:
             self._idle_message()
 
-    def _fbi_display(self, file, delay):
+    def _fbi_display(self, path, delay):
         """Display image with fbi and wait for set delay"""
         #detect if the delay is number and has valid value
         if not self._is_number(delay) and delay >0:
             return
         args = ['fbi']
-        args.extend(['-a -T 2'])  # Add arguments.
-        args.append(file)                # Add image file path.
+        args.extend(['-a -T 2 --noverbose'])  # Add arguments.
+		if delay is not 0:
+            args.extend(['-t', str(delay)])
+        args.append(path)                # Add image file path.
         # Run fbi process and direct standard output to /dev/null.
         self._process = subprocess.Popen(args,
                                          stdout=open(os.devnull, 'wb'),
                                          close_fds=True)
-        time.sleep(float(delay));
-        if self._process is not None and self._process.returncode is None:
+
+    def _fbi_is_running(self):
+        """Return true if the video player is running, false otherwise."""
+        if self._process is None:
+            return False
+        self._process.poll()
+        return self._process.returncode is None
+		
+	def _fbi_stop(self):
+		if self._process is not None and self._process.returncode is None:
             # There are a couple processes used by omxplayer, so kill both
             # with a pkill command.
             subprocess.call(['pkill', '-9', 'fbi'])
         # Let the process be garbage collected.
         self._process = None
-        
+		
     def run(self):
         """Main program loop.  Will never return!"""
         # Get playlist of movies to play from file reader.
@@ -236,16 +246,17 @@ class VideoLooper(object):
         # Main loop to play videos in the playlist and listen for file changes.
         while self._running:
             # Load and play a new movie if nothing is playing.
-            if not self._player.is_playing():
+            if (not self._player.is_playing()) and (not self._fbi_is_running()):
                 movie = playlist.get_next()
                 if movie is not None:
                     # Start playing the first available movie.
                     self._print('Playing movie: {0}'.format(movie))
-                    self._fbi_display(movie, self._fbi_delay)
+                    self._fbi_display(self._reader.search_paths(), self._fbi_delay)
                     #self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
+			    self._fbi_stop()
                 self._player.stop(3)  # Up to 3 second delay waiting for old 
                                       # player to stop.
                 # Rebuild playlist and show countdown again (if OSD enabled).
