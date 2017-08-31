@@ -257,7 +257,7 @@ class VideoLooper(object):
                     filename, file_ext = os.path.splitext(movie)
                     file_is_image = False
                     for ext in self._fbi_extensions:
-                        if file_ext = ext:
+                        if file_ext == ext:
                             file_is_image = True
                             break
                     if file_is_image:
