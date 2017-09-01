@@ -229,7 +229,7 @@ class VideoLooper(object):
                             file_is_image = True
                             self._print('image file')
                             break
-                    if imagefile:
+                    if file_is_image:
                         image = pygame.image.load(movie)
                         iw, ih = image.get_size()
                         sw, sh = self._screen.get_size()
