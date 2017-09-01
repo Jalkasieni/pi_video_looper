@@ -225,7 +225,9 @@ class VideoLooper(object):
                     filename, file_ext = os.path.splitext(movie)
                     file_is_image = False
                     for ext in self._img_extensions:
-                        if file_ext == ext:
+                        self._print(ext)
+						self._print(file_ext)
+						if file_ext == ext:
                             file_is_image = True
                             self._print('image file')
                             break
@@ -243,7 +245,9 @@ class VideoLooper(object):
                     self._screen.fill(self._bgcolor)
                     self._screen.blit(image, (sw/2-iw/2, sh/2-ih/2))
                     pygame.display.update()
-                    time.sleep(floaf(self._img_delay))
+                    time.sleep(float(self._img_delay)+0.01)
+                    
+                    #self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
