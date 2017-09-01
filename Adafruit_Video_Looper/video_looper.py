@@ -241,7 +241,7 @@ class VideoLooper(object):
                             image = pygame.transform.scale(image,(sw,int(sh*w_ratio)))
                         iw, ih = image.get_size()
                     self._screen.fill(self._bgcolor)
-                    self._screen.blit(label, (sw/2-iw/2, sh/2-ih/2))
+                    self._screen.blit(image, (sw/2-iw/2, sh/2-ih/2))
                     pygame.display.update()
                     time.sleep(floaf(self._img_delay))
             # Check for changes in the file search path (like USB drives added)
