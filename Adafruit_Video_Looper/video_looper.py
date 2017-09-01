@@ -70,6 +70,8 @@ class VideoLooper(object):
                                              .split())
         # Load sound volume file name value
         self._sound_vol_file = self._config.get('omxplayer', 'sound_vol_file');
+        #Load image delay time file
+        self._image_delay_file = self._config.get('video_looper', 'image_delay_file');
         # default value to 0 millibels (omxplayer)
         self._sound_vol = 0
         # Initialize pygame and display a blank screen.
@@ -137,6 +139,13 @@ class VideoLooper(object):
                         sound_vol_string = sound_file.readline()
                         if self._is_number(sound_vol_string):
                             self._sound_vol = int(float(sound_vol_string))
+                #get image delay time from file in the usb key
+                image_delay_file_path = '{0}/{1}'.format(path.rstrip('/'), self._image_delay_file)
+                if os.path.exists(image_delay_file_path):
+                    with open(image_delay_file_path, 'r') as delay_file:
+                        delay_string = delay_file.readline()
+                        if self._is_number(delay_string):
+                            self._img_delay = int(float(delay_string))
         # Create a playlist with the sorted list of movies.
         return Playlist(sorted(movies), self._is_random)
 
@@ -224,16 +233,19 @@ class VideoLooper(object):
                     self._print('Playing movie: {0}'.format(movie))
                     filename, file_ext = os.path.splitext(movie)
                     file_is_image = False
+                    #determine if file is image file or video
                     for ext in self._img_extensions:
                         if file_ext == ('.'+ext):
                             file_is_image = True
                             self._print('image file')
                             break
                     if file_is_image:
+                        #load image file
                         image = pygame.image.load(movie)
                         iw, ih = image.get_size()
                         sw, sh = self._screen.get_size()
-                        if not(iw == sw) and not (ih == sh):
+                        if not(iw == sw) and not (ih == sh): #don't spend time to scaling if image is allready right size
+                            #scale respecting orginal aspect ratio
                             w_ratio = float(iw)/sw
                             h_ratio = float(ih)/sh
                             if h_ratio>w_ratio:
@@ -242,11 +254,13 @@ class VideoLooper(object):
                                 image = pygame.transform.smoothscale(image,(sw,int(ih/w_ratio)))
                             iw, ih = image.get_size()
                         self._screen.fill(self._bgcolor)
+                        #center image
                         self._screen.blit(image, (sw/2-iw/2, sh/2-ih/2))
                         pygame.display.update()
                         time.sleep(float(self._img_delay)+0.01)
                     else:
                         self._print('video file')
+                        #blank screen before video playback
                         self._screen.fill(self._bgcolor)
                         pygame.display.update()
                         self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
