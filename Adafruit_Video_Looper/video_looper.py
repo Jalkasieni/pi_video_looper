@@ -225,29 +225,29 @@ class VideoLooper(object):
                     filename, file_ext = os.path.splitext(movie)
                     file_is_image = False
                     for ext in self._img_extensions:
-                        self._print(ext)
-                        self._print(file_ext)
-                        if file_ext == ext:
+                        if file_ext == ('.'+ext):
                             file_is_image = True
                             self._print('image file')
                             break
-                    image = pygame.image.load(movie)
-                    iw, ih = image.get_size()
-                    sw, sh = self._screen.get_size()
-                    if not(iw == sw) and not (ih == sh):
-                        w_ratio = float(iw)/sw
-                        h_ratio = float(ih)/sh
-                        if h_ratio>w_ratio:
-                            image = pygame.transform.scale(image,(int(sw*h_ratio),sh))
-                        else:
-                            image = pygame.transform.scale(image,(sw,int(sh*w_ratio)))
-                        iw, ih = image.get_size()
-                    self._screen.fill(self._bgcolor)
-                    self._screen.blit(image, (sw/2-iw/2, sh/2-ih/2))
-                    pygame.display.update()
-                    time.sleep(float(self._img_delay)+0.01)
-                    
-                    #self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
+					if imagefile:
+						image = pygame.image.load(movie)
+						iw, ih = image.get_size()
+						sw, sh = self._screen.get_size()
+						if not(iw == sw) and not (ih == sh):
+							w_ratio = float(iw)/sw
+							h_ratio = float(ih)/sh
+							if h_ratio>w_ratio:
+								image = pygame.transform.scale(image,(int(iw/h_ratio),sh))
+							else:
+								image = pygame.transform.scale(image,(sw,int(ih/w_ratio)))
+							iw, ih = image.get_size()
+						self._screen.fill(self._bgcolor)
+						self._screen.blit(image, (sw/2-iw/2, sh/2-ih/2))
+						pygame.display.update()
+						time.sleep(float(self._img_delay)+0.01)
+					else:
+						self._print('video file')
+						self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
