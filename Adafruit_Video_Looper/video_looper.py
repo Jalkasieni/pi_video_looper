@@ -261,11 +261,16 @@ class VideoLooper(object):
                             file_is_image = True
                             self._print('image file')
                             break
-                    if file_is_image:
-                        self._fbi_display(movie, self._fbi_delay)
-                    else:
-                        self._print('video file')
-                        self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
+                    image = pygame.image.load(movie)
+                    self._screen.fill(self._bgcolor)
+                    self._scree.blit(image,(0,0))
+                    pygame.display.update()
+                    time.sleep(10.0)
+                    #if file_is_image:
+                    #    self._fbi_display(movie, self._fbi_delay)
+                    #else:
+                    #    self._print('video file') # korjaa tiedoston tunnistus
+                    #    self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
             if self._reader.is_changed():
