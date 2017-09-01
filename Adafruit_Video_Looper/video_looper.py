@@ -247,6 +247,8 @@ class VideoLooper(object):
                         time.sleep(float(self._img_delay)+0.01)
                     else:
                         self._print('video file')
+                        self._screen.fill(self._bgcolor)
+                        pygame.display.update()
                         self._player.play(movie, loop=playlist.length() == 1, vol = self._sound_vol)
             # Check for changes in the file search path (like USB drives added)
             # and rebuild the playlist.
