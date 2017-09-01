@@ -263,7 +263,7 @@ class VideoLooper(object):
                             break
                     image = pygame.image.load(movie)
                     self._screen.fill(self._bgcolor)
-                    self._scree.blit(image,(0,0))
+                    self._screen.blit(image,(0,0))
                     pygame.display.update()
                     time.sleep(10.0)
                     #if file_is_image:
