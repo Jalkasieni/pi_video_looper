@@ -237,9 +237,9 @@ class VideoLooper(object):
                             w_ratio = float(iw)/sw
                             h_ratio = float(ih)/sh
                             if h_ratio>w_ratio:
-                                image = pygame.transform.scale(image,(int(iw/h_ratio),sh))
+                                image = pygame.transform.smoothscale(image,(int(iw/h_ratio),sh))
                             else:
-                                image = pygame.transform.scale(image,(sw,int(ih/w_ratio)))
+                                image = pygame.transform.smoothscale(image,(sw,int(ih/w_ratio)))
                             iw, ih = image.get_size()
                         self._screen.fill(self._bgcolor)
                         self._screen.blit(image, (sw/2-iw/2, sh/2-ih/2))
