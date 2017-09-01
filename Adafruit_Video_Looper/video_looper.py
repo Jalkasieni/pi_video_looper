@@ -226,8 +226,8 @@ class VideoLooper(object):
                     file_is_image = False
                     for ext in self._img_extensions:
                         self._print(ext)
-						self._print(file_ext)
-						if file_ext == ext:
+                        self._print(file_ext)
+                        if file_ext == ext:
                             file_is_image = True
                             self._print('image file')
                             break
