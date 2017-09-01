@@ -262,8 +262,18 @@ class VideoLooper(object):
                             self._print('image file')
                             break
                     image = pygame.image.load(movie)
+                    iw, ih = image.get_size()
+                    sw, sh = self._screen.get_size()
+                    if not(iw == sw) and not (ih == sh):
+                        w_ratio = float(iw)/sw
+                        h_ratio = float(ih)/sh
+                        if h_ratio>w_ratio:
+                            image = pygame.transform(image,(int(sw*h_ratio),sh))
+                        else:
+                            image = pygame.transform(image,(sw,int(sh*w_ratio)))
+                        iw, ih = image.get_size()
                     self._screen.fill(self._bgcolor)
-                    self._screen.blit(image,(0,0))
+                    self._screen.blit(label, (sw/2-iw/2, sh/2-ih/2))
                     pygame.display.update()
                     time.sleep(10.0)
                     #if file_is_image:
